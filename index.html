@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crónicas de Vida - RPG de Texto</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="menu-screen" id="menu">
+    <div class="menu-card">
+      <div class="menu-hero">
+        <div class="menu-logo">
+          <span>Crónicas</span>
+          <span class="accent">de Vida</span>
+        </div>
+        <p class="menu-subtitle">RPG de texto · Simulador de vida</p>
+      </div>
+      <div class="menu-content">
+        <div class="menu-art">
+          <div class="menu-art-frame">
+            <div class="menu-art-overlay">Historia interactiva</div>
+          </div>
+        </div>
+        <div class="menu-text">
+          <h2>Bienvenido/a</h2>
+          <p>
+            Explora una nueva ciudad, construye relaciones y administra tu tiempo. Cada decisión
+            impacta tu historia, tus recursos y tu bienestar.
+          </p>
+          <p>
+            Guarda tu progreso en el navegador y retoma la partida cuando quieras. Ajusta el ritmo
+            del día con acciones clave y descubre eventos inesperados.
+          </p>
+          <div class="menu-actions">
+            <button id="iniciar">Iniciar nueva vida</button>
+            <button id="continuar">Continuar partida</button>
+          </div>
+          <div class="menu-disclaimer">
+            <h3>Notas importantes</h3>
+            <ul>
+              <li>La partida se guarda en el almacenamiento local del navegador.</li>
+              <li>Si usas modo incógnito, tus datos podrían perderse.</li>
+              <li>Puedes reiniciar el progreso desde el juego en cualquier momento.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="menu-footer">
+        <p>Diseño inspirado en RPGs de vida basados en texto.</p>
+      </footer>
+    </div>
+  </div>
+
+  <div class="app hidden" id="game">
+    <header class="hero">
+      <div>
+        <h1>Crónicas de Vida</h1>
+        <p class="subtitle">Simulador de vida RPG basado en texto.</p>
+      </div>
+      <div class="time">
+        <p id="fecha">Día 1 · Mañana</p>
+        <p id="nombre-personaje">Personaje: Alex</p>
+      </div>
+    </header>
+
+    <section class="panel stats-bar">
+      <h2>Barra de estadísticas</h2>
+      <div class="bars-grid">
+        <div class="bar" data-stat="salud">
+          <div class="bar-header">
+            <span>Salud</span>
+            <span class="bar-value" id="salud"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="salud-bar"></span></div>
+        </div>
+        <div class="bar" data-stat="energia">
+          <div class="bar-header">
+            <span>Energía</span>
+            <span class="bar-value" id="energia"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="energia-bar"></span></div>
+        </div>
+        <div class="bar" data-stat="animo">
+          <div class="bar-header">
+            <span>Ánimo</span>
+            <span class="bar-value" id="animo"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="animo-bar"></span></div>
+        </div>
+        <div class="bar" data-stat="dinero">
+          <div class="bar-header">
+            <span>Dinero</span>
+            <span class="bar-value" id="dinero"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="dinero-bar"></span></div>
+        </div>
+        <div class="bar" data-stat="habilidad">
+          <div class="bar-header">
+            <span>Habilidad</span>
+            <span class="bar-value" id="habilidad"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="habilidad-bar"></span></div>
+        </div>
+        <div class="bar" data-stat="relaciones">
+          <div class="bar-header">
+            <span>Relaciones</span>
+            <span class="bar-value" id="relaciones"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="relaciones-bar"></span></div>
+        </div>
+        <div class="bar" data-stat="reputacion">
+          <div class="bar-header">
+            <span>Reputación</span>
+            <span class="bar-value" id="reputacion"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="reputacion-bar"></span></div>
+        </div>
+        <div class="bar" data-stat="estres">
+          <div class="bar-header">
+            <span>Estrés</span>
+            <span class="bar-value" id="estres"></span>
+          </div>
+          <div class="bar-track"><span class="bar-fill" id="estres-bar"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <main class="grid">
+      <section class="panel actions">
+        <h2>Acciones</h2>
+        <div class="actions-grid">
+          <button data-action="trabajar">Trabajar</button>
+          <button data-action="estudiar">Estudiar</button>
+          <button data-action="socializar">Socializar</button>
+          <button data-action="entrenar">Entrenar</button>
+          <button data-action="descansar">Descansar</button>
+          <button data-action="explorar">Explorar la ciudad</button>
+          <button data-action="hobby">Practicar hobby</button>
+          <button data-action="comprar">Ir de compras</button>
+        </div>
+        <div class="action-footer">
+          <button id="avanzar">Pasar tiempo</button>
+          <button id="guardar">Guardar partida</button>
+          <button id="cargar">Cargar partida</button>
+          <button id="reiniciar">Reiniciar</button>
+        </div>
+      </section>
+
+      <section class="panel log">
+        <h2>Bitácora</h2>
+        <div id="historial" class="historial"></div>
+      </section>
+
+      <section class="panel goals">
+        <h2>Metas de vida</h2>
+        <ul>
+          <li>Conseguir estabilidad financiera.</li>
+          <li>Desarrollar una carrera sólida.</li>
+          <li>Construir relaciones significativas.</li>
+          <li>Mantener un equilibrio saludable.</li>
+        </ul>
+        <p class="tip">Tus decisiones afectan el desenlace. Mantén el equilibrio y atiende eventos inesperados.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
