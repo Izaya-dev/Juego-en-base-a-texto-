@@ -1,306 +1,309 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema Contable Local</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INK FORGE | Sistema de Gestión</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <header class="header">
-    <div class="header-content">
-      <h1>📒 Sistema Contable</h1>
-      <p class="subtitle">Gestión contable local para tu negocio</p>
-    </div>
-    <div class="header-info">
-      <span id="empresa-nombre">Empresa: Mi Negocio</span>
-      <span id="fecha-actual"></span>
-    </div>
-  </header>
-
-  <nav class="nav-tabs">
-    <button class="tab-btn active" data-tab="asientos">Asientos Contables</button>
-    <button class="tab-btn" data-tab="cuentas">Plan de Cuentas</button>
-    <button class="tab-btn" data-tab="libro-diario">Libro Diario</button>
-    <button class="tab-btn" data-tab="libro-mayor">Libro Mayor</button>
-    <button class="tab-btn" data-tab="balances">Balances</button>
-    <button class="tab-btn" data-tab="configuracion">Configuración</button>
-  </nav>
-
-  <main class="container">
-    <!-- SECCIÓN ASIENTOS CONTABLES -->
-    <section id="asientos" class="tab-content active">
-      <div class="card">
-        <h2>Nuevo Asiento Contable</h2>
-        <form id="formulario-asiento">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="fecha-asiento">Fecha:</label>
-              <input type="date" id="fecha-asiento" required />
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-print"></i>
+                <h2>INK FORGE</h2>
             </div>
-            <div class="form-group">
-              <label for="descripcion-asiento">Descripción:</label>
-              <input type="text" id="descripcion-asiento" placeholder="Descripción del asiento" required />
+            <nav>
+                <ul>
+                    <li class="active" onclick="showSection('dashboard')"><i class="fas fa-home"></i> Inicio</li>
+                    <li onclick="showSection('projects')"><i class="fas fa-book"></i> Proyectos & Tandas</li>
+                    <li onclick="showSection('inventory')"><i class="fas fa-boxes"></i> Inventario</li>
+                    <li onclick="showSection('accounting')"><i class="fas fa-calculator"></i> Contabilidad</li>
+                    <li onclick="showSection('reports')"><i class="fas fa-chart-line"></i> Reportes</li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <small>Sistema Local v2.0</small>
             </div>
-            <div class="form-group">
-              <label for="tipo-asiento">Tipo:</label>
-              <select id="tipo-asiento">
-                <option value="normal">Normal</option>
-                <option value="ajuste">Ajuste</option>
-                <option value="cierre">Cierre</option>
-              </select>
-            </div>
-          </div>
+        </aside>
 
-          <div class="movimientos-container">
-            <h3>Movimientos (Partida Doble)</h3>
-            <div id="lista-movimientos"></div>
-            <button type="button" id="agregar-movimiento" class="btn-secondary">+ Agregar Movimiento</button>
-          </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <h1 id="page-title">Panel General</h1>
+                <div class="header-actions">
+                    <button onclick="exportData()" class="btn-secondary"><i class="fas fa-download"></i> Respaldo</button>
+                    <button onclick="document.getElementById('importFile').click()" class="btn-secondary"><i class="fas fa-upload"></i> Restaurar</button>
+                    <input type="file" id="importFile" hidden onchange="importData(this)">
+                </div>
+            </header>
 
-          <div class="totales-asiento">
-            <span>Total Debe: <strong id="total-debe">$0.00</strong></span>
-            <span>Total Haber: <strong id="total-haber">$0.00</strong></span>
-            <span id="estado-cuadre" class="estado-pendiente">Estado: Pendiente de cuadre</span>
-          </div>
+            <!-- DASHBOARD -->
+            <section id="dashboard" class="content-section active">
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3><i class="fas fa-layer-group"></i> Proyectos Activos</h3>
+                        <p id="dash-active-projects">0</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Stock Crítico</h3>
+                        <p id="dash-low-stock">0</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-coins"></i> Gastos Mes</h3>
+                        <p id="dash-expenses">$0.00</p>
+                    </div>
+                    <div class="card">
+                        <h3><i class="fas fa-wallet"></i> Caja Actual</h3>
+                        <p id="dash-cash">$0.00</p>
+                    </div>
+                </div>
+                
+                <div class="recent-activity">
+                    <h3>Actividad Reciente</h3>
+                    <table class="simple-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dash-recent-table">
+                            <!-- JS populated -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-          <div class="form-actions">
-            <button type="submit" id="guardar-asiento" class="btn-primary" disabled>Guardar Asiento</button>
-            <button type="reset" id="limpiar-asiento" class="btn-secondary">Limpiar</button>
-          </div>
-        </form>
-      </div>
+            <!-- PROYECTOS -->
+            <section id="projects" class="content-section">
+                <div class="section-header">
+                    <h2>Gestión de Tandas / Libros</h2>
+                    <button class="btn-primary" onclick="openModal('modalProject')"><i class="fas fa-plus"></i> Nuevo Proyecto</button>
+                </div>
+                
+                <div class="cards-grid" id="projects-list">
+                    <!-- Project Cards injected here -->
+                </div>
+            </section>
 
-      <div class="card">
-        <h2>Últimos Asientos Registrados</h2>
-        <div class="tabla-container">
-          <table id="tabla-asientos-recientes">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Fecha</th>
-                <th>Descripción</th>
-                <th>Tipo</th>
-                <th>Monto Total</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+            <!-- DETALLE PROYECTO (Oculto por defecto) -->
+            <section id="project-detail" class="content-section">
+                <button class="btn-back" onclick="showSection('projects')"><i class="fas fa-arrow-left"></i> Volver a Proyectos</button>
+                <div class="project-header">
+                    <h2 id="pd-title">Nombre del Libro</h2>
+                    <span id="pd-status" class="badge">En Proceso</span>
+                </div>
+                
+                <div class="project-stats">
+                    <div class="stat-box">
+                        <label>Costo Materiales</label>
+                        <span id="pd-cost-materials">$0.00</span>
+                    </div>
+                    <div class="stat-box">
+                        <label>Mano de Obra/Gastos</label>
+                        <span id="pd-cost-labor">$0.00</span>
+                    </div>
+                    <div class="stat-box highlight">
+                        <label>Costo Total Producción</label>
+                        <span id="pd-cost-total">$0.00</span>
+                    </div>
+                    <div class="stat-box">
+                        <label>Costo Unitario</label>
+                        <span id="pd-cost-unit">$0.00</span>
+                    </div>
+                </div>
 
-    <!-- SECCIÓN PLAN DE CUENTAS -->
-    <section id="cuentas" class="tab-content">
-      <div class="card">
-        <h2>Plan de Cuentas</h2>
-        <button id="agregar-cuenta" class="btn-primary">+ Nueva Cuenta</button>
-        
-        <div class="filtro-cuentas">
-          <input type="text" id="buscar-cuenta" placeholder="Buscar cuenta..." />
-          <select id="filtro-tipo-cuenta">
-            <option value="">Todos los tipos</option>
-            <option value="activo">Activo</option>
-            <option value="pasivo">Pasivo</option>
-            <option value="capital">Capital</option>
-            <option value="ingreso">Ingreso</option>
-            <option value="gasto">Gasto</option>
-          </select>
-        </div>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('pd-materials')">Materiales Usados</button>
+                    <button class="tab-btn" onclick="switchTab('pd-expenses')">Gastos Directos</button>
+                </div>
 
-        <div class="tabla-container">
-          <table id="tabla-cuentas">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Nivel</th>
-                <th>Saldo Actual</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+                <div id="pd-materials" class="tab-content active">
+                    <button class="btn-small" onclick="openModal('modalUseMaterial')"><i class="fas fa-plus"></i> Usar Material</button>
+                    <table class="data-table">
+                        <thead><tr><th>Material</th><th>Cantidad</th><th>Costo Unit.</th><th>Subtotal</th></tr></thead>
+                        <tbody id="pd-materials-table"></tbody>
+                    </table>
+                </div>
 
-    <!-- SECCIÓN LIBRO DIARIO -->
-    <section id="libro-diario" class="tab-content">
-      <div class="card">
-        <h2>Libro Diario</h2>
-        <div class="filtro-fechas">
-          <div class="form-group">
-            <label for="fecha-desde">Desde:</label>
-            <input type="date" id="fecha-desde" />
-          </div>
-          <div class="form-group">
-            <label for="fecha-hasta">Hasta:</label>
-            <input type="date" id="fecha-hasta" />
-          </div>
-          <button id="filtrar-libro-diario" class="btn-primary">Filtrar</button>
-          <button id="exportar-libro-diario" class="btn-secondary">Exportar</button>
-        </div>
+                <div id="pd-expenses" class="tab-content">
+                    <button class="btn-small" onclick="openModal('modalProjectExpense')"><i class="fas fa-plus"></i> Registrar Gasto</button>
+                    <table class="data-table">
+                        <thead><tr><th>Concepto</th><th>Fecha</th><th>Monto</th></tr></thead>
+                        <tbody id="pd-expenses-table"></tbody>
+                    </table>
+                </div>
+            </section>
 
-        <div class="tabla-container">
-          <table id="tabla-libro-diario">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Cuenta</th>
-                <th>Descripción</th>
-                <th>Debe</th>
-                <th>Haber</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+            <!-- INVENTARIO -->
+            <section id="inventory" class="content-section">
+                <div class="section-header">
+                    <h2>Inventario de Materias Primas</h2>
+                    <button class="btn-primary" onclick="openModal('modalInventory')"><i class="fas fa-plus"></i> Nuevo Item</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Categoría</th>
+                            <th>Stock Actual</th>
+                            <th>Unidad</th>
+                            <th>Costo Prom.</th>
+                            <th>Valor Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table">
+                        <!-- JS Populated -->
+                    </tbody>
+                </table>
+            </section>
 
-    <!-- SECCIÓN LIBRO MAYOR -->
-    <section id="libro-mayor" class="tab-content">
-      <div class="card">
-        <h2>Libro Mayor</h2>
-        <div class="form-group">
-          <label for="seleccionar-cuenta-mayor">Seleccionar Cuenta:</label>
-          <select id="seleccionar-cuenta-mayor">
-            <option value="">-- Todas las cuentas --</option>
-          </select>
-        </div>
+            <!-- CONTABILIDAD -->
+            <section id="accounting" class="content-section">
+                <div class="section-header">
+                    <h2>Libro Diario</h2>
+                    <button class="btn-primary" onclick="openModal('modalJournalEntry')"><i class="fas fa-plus"></i> Asiento Manual</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cuenta</th>
+                            <th>Descripción</th>
+                            <th>Debe</th>
+                            <th>Haber</th>
+                        </tr>
+                    </thead>
+                    <tbody id="journal-table"></tbody>
+                </table>
+            </section>
 
-        <div id="contenido-libro-mayor"></div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN BALANCES -->
-    <section id="balances" class="tab-content">
-      <div class="card">
-        <h2>Generar Balances</h2>
-        <div class="balance-options">
-          <button id="btn-balance-comprobacion" class="btn-primary">Balance de Comprobación</button>
-          <button id="btn-estado-resultados" class="btn-primary">Estado de Resultados</button>
-          <button id="btn-balance-general" class="btn-primary">Balance General</button>
-        </div>
-      </div>
-
-      <div id="resultado-balance" class="card resultado-balance">
-        <h3 id="titulo-balance"></h3>
-        <div id="contenido-balance"></div>
-      </div>
-    </section>
-
-    <!-- SECCIÓN CONFIGURACIÓN -->
-    <section id="configuracion" class="tab-content">
-      <div class="card">
-        <h2>Configuración del Sistema</h2>
-        
-        <div class="form-group">
-          <label for="nombre-empresa">Nombre de la Empresa:</label>
-          <input type="text" id="nombre-empresa" placeholder="Mi Negocio S.A." />
-        </div>
-
-        <div class="form-group">
-          <label for="moneda">Moneda:</label>
-          <select id="moneda">
-            <option value="$">Dólar ($)</option>
-            <option value="€">Euro (€)</option>
-            <option value="MXN">Peso Mexicano (MXN)</option>
-            <option value="COP">Peso Colombiano (COP)</option>
-            <option value="ARS">Peso Argentino (ARS)</option>
-            <option value="CLP">Peso Chileno (CLP)</option>
-            <option value="PEN">Sol Peruano (PEN)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="ejercicio-fiscal">Ejercicio Fiscal:</label>
-          <input type="number" id="ejercicio-fiscal" min="2000" max="2100" value="2025" />
-        </div>
-
-        <div class="form-actions">
-          <button id="guardar-configuracion" class="btn-primary">Guardar Configuración</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Gestión de Datos</h2>
-        <p>Los datos se almacenan localmente en tu navegador. No se requiere conexión a internet.</p>
-        
-        <div class="data-actions">
-          <button id="exportar-datos" class="btn-secondary">📤 Exportar Datos (JSON)</button>
-          <button id="importar-datos" class="btn-secondary">📥 Importar Datos</button>
-          <button id="respaldar-datos" class="btn-secondary">💾 Crear Respaldo</button>
-          <button id="limpiar-datos" class="btn-danger">⚠️ Borrar Todos los Datos</button>
-        </div>
-        
-        <input type="file" id="archivo-importar" accept=".json" style="display: none;" />
-      </div>
-
-      <div class="card">
-        <h2>Información del Sistema</h2>
-        <div class="info-sistema">
-          <p><strong>Versión:</strong> 1.0.0</p>
-          <p><strong>Almacenamiento:</strong> LocalStorage del navegador</p>
-          <p><strong>Requisitos:</strong> Navegador web moderno (Chrome, Firefox, Edge, Safari)</p>
-          <p><strong>Funcionamiento:</strong> 100% offline - Sin necesidad de internet</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- MODAL PARA NUEVA CUENTA -->
-  <dialog id="modal-cuenta">
-    <div class="modal-content">
-      <h3>Nueva Cuenta Contable</h3>
-      <form id="formulario-cuenta">
-        <div class="form-group">
-          <label for="codigo-cuenta">Código:</label>
-          <input type="text" id="codigo-cuenta" required placeholder="Ej: 1.1.01" />
-        </div>
-        <div class="form-group">
-          <label for="nombre-cuenta">Nombre:</label>
-          <input type="text" id="nombre-cuenta" required placeholder="Ej: Caja General" />
-        </div>
-        <div class="form-group">
-          <label for="tipo-cuenta">Tipo:</label>
-          <select id="tipo-cuenta" required>
-            <option value="activo">Activo</option>
-            <option value="pasivo">Pasivo</option>
-            <option value="capital">Capital</option>
-            <option value="ingreso">Ingreso</option>
-            <option value="gasto">Gasto</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="nivel-cuenta">Nivel:</label>
-          <select id="nivel-cuenta" required>
-            <option value="1">Nivel 1 (Mayor)</option>
-            <option value="2">Nivel 2 (Subcuenta)</option>
-            <option value="3">Nivel 3 (Auxiliar)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="cuenta-padre">Cuenta Padre (opcional):</label>
-          <select id="cuenta-padre">
-            <option value="">-- Ninguna --</option>
-          </select>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn-primary">Guardar Cuenta</button>
-          <button type="button" id="cerrar-modal-cuenta" class="btn-secondary">Cancelar</button>
-        </div>
-      </form>
+             <!-- REPORTES -->
+             <section id="reports" class="content-section">
+                <h2>Reporte de Rentabilidad por Proyecto</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Proyecto</th>
+                            <th>Unidades</th>
+                            <th>Costo Total</th>
+                            <th>Costo Unitario</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-projects-table"></tbody>
+                </table>
+            </section>
+        </main>
     </div>
-  </dialog>
 
-  <footer class="footer">
-    <p>Sistema Contable Local © 2025 - Funciona sin conexión a internet</p>
-  </footer>
+    <!-- MODALES -->
+    
+    <!-- Modal Nuevo Proyecto -->
+    <div id="modalProject" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalProject')">&times;</span>
+            <h3>Nuevo Proyecto / Tanda</h3>
+            <form onsubmit="saveProject(event)">
+                <label>Nombre del Libro/Proyecto</label>
+                <input type="text" id="proj-name" required>
+                <label>Cantidad de Unidades (Tiraje)</label>
+                <input type="number" id="proj-qty" required>
+                <label>Descripción</label>
+                <textarea id="proj-desc"></textarea>
+                <button type="submit" class="btn-primary">Crear Proyecto</button>
+            </form>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <!-- Modal Inventario -->
+    <div id="modalInventory" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalInventory')">&times;</span>
+            <h3>Gestionar Inventario</h3>
+            <form onsubmit="saveInventoryItem(event)">
+                <input type="hidden" id="inv-id">
+                <label>Nombre del Material</label>
+                <input type="text" id="inv-name" required placeholder="Ej: Papel Bond 75g">
+                <label>Categoría</label>
+                <select id="inv-cat">
+                    <option value="Papel">Papel</option>
+                    <option value="Tinta">Tinta</option>
+                    <option value="Cartón">Cartón</option>
+                    <option value="Insumos">Insumos varios</option>
+                </select>
+                <label>Stock Inicial/Actual</label>
+                <input type="number" step="0.01" id="inv-qty" required>
+                <label>Unidad de Medida</label>
+                <input type="text" id="inv-unit" placeholder="Ej: Resmas, Litros, Kg" required>
+                <label>Costo Unitario Promedio</label>
+                <input type="number" step="0.01" id="inv-cost" required>
+                <button type="submit" class="btn-primary">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Usar Material en Proyecto -->
+    <div id="modalUseMaterial" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalUseMaterial')">&times;</span>
+            <h3>Asignar Material al Proyecto</h3>
+            <form onsubmit="assignMaterialToProject(event)">
+                <input type="hidden" id="use-proj-id">
+                <label>Seleccionar Material</label>
+                <select id="use-mat-select" required></select>
+                <label>Cantidad a usar</label>
+                <input type="number" step="0.01" id="use-qty" required>
+                <small id="use-stock-info" style="color:blue"></small>
+                <button type="submit" class="btn-primary">Descontar y Asignar Costo</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Gasto Proyecto -->
+    <div id="modalProjectExpense" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalProjectExpense')">&times;</span>
+            <h3>Registrar Gasto Directo</h3>
+            <form onsubmit="addProjectExpense(event)">
+                <input type="hidden" id="exp-proj-id">
+                <label>Concepto</label>
+                <input type="text" id="exp-concept" required placeholder="Ej: Transporte, Mano de obra extra">
+                <label>Monto</label>
+                <input type="number" step="0.01" id="exp-amount" required>
+                <button type="submit" class="btn-primary">Registrar Gasto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Asiento Contable -->
+    <div id="modalJournalEntry" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modalJournalEntry')">&times;</span>
+            <h3>Asiento Contable</h3>
+            <form onsubmit="addJournalEntry(event)">
+                <label>Fecha</label>
+                <input type="date" id="je-date" required>
+                <label>Descripción</label>
+                <input type="text" id="je-desc" required>
+                <label>Cuenta (Debe)</label>
+                <select id="je-debit-acc"></select>
+                <label>Cuenta (Haber)</label>
+                <select id="je-credit-acc"></select>
+                <label>Monto</label>
+                <input type="number" step="0.01" id="je-amount" required>
+                <button type="submit" class="btn-primary">Registrar Asiento</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
