@@ -3,167 +3,303 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crónicas de Vida - RPG de Texto</title>
+  <title>Sistema Contable Local</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="menu-screen" id="menu">
-    <div class="menu-card">
-      <div class="menu-hero">
-        <div class="menu-logo">
-          <span>Crónicas</span>
-          <span class="accent">de Vida</span>
-        </div>
-        <p class="menu-subtitle">RPG de texto · Simulador de vida</p>
-      </div>
-      <div class="menu-content">
-        <div class="menu-art">
-          <div class="menu-art-frame">
-            <div class="menu-art-overlay">Historia interactiva</div>
-          </div>
-        </div>
-        <div class="menu-text">
-          <h2>Bienvenido/a</h2>
-          <p>
-            Explora una nueva ciudad, construye relaciones y administra tu tiempo. Cada decisión
-            impacta tu historia, tus recursos y tu bienestar.
-          </p>
-          <p>
-            Guarda tu progreso en el navegador y retoma la partida cuando quieras. Ajusta el ritmo
-            del día con acciones clave y descubre eventos inesperados.
-          </p>
-          <div class="menu-actions">
-            <button id="iniciar">Iniciar nueva vida</button>
-            <button id="continuar">Continuar partida</button>
-          </div>
-          <div class="menu-disclaimer">
-            <h3>Notas importantes</h3>
-            <ul>
-              <li>La partida se guarda en el almacenamiento local del navegador.</li>
-              <li>Si usas modo incógnito, tus datos podrían perderse.</li>
-              <li>Puedes reiniciar el progreso desde el juego en cualquier momento.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <footer class="menu-footer">
-        <p>Diseño inspirado en RPGs de vida basados en texto.</p>
-      </footer>
+  <header class="header">
+    <div class="header-content">
+      <h1>📒 Sistema Contable</h1>
+      <p class="subtitle">Gestión contable local para tu negocio</p>
     </div>
-  </div>
+    <div class="header-info">
+      <span id="empresa-nombre">Empresa: Mi Negocio</span>
+      <span id="fecha-actual"></span>
+    </div>
+  </header>
 
-  <div class="app hidden" id="game">
-    <header class="hero">
-      <div>
-        <h1>Crónicas de Vida</h1>
-        <p class="subtitle">Simulador de vida RPG basado en texto.</p>
-      </div>
-      <div class="time">
-        <p id="fecha">Día 1 · Mañana</p>
-        <p id="nombre-personaje">Personaje: Alex</p>
-      </div>
-    </header>
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="asientos">Asientos Contables</button>
+    <button class="tab-btn" data-tab="cuentas">Plan de Cuentas</button>
+    <button class="tab-btn" data-tab="libro-diario">Libro Diario</button>
+    <button class="tab-btn" data-tab="libro-mayor">Libro Mayor</button>
+    <button class="tab-btn" data-tab="balances">Balances</button>
+    <button class="tab-btn" data-tab="configuracion">Configuración</button>
+  </nav>
 
-    <section class="panel stats-bar">
-      <h2>Barra de estadísticas</h2>
-      <div class="bars-grid">
-        <div class="bar" data-stat="salud">
-          <div class="bar-header">
-            <span>Salud</span>
-            <span class="bar-value" id="salud"></span>
+  <main class="container">
+    <!-- SECCIÓN ASIENTOS CONTABLES -->
+    <section id="asientos" class="tab-content active">
+      <div class="card">
+        <h2>Nuevo Asiento Contable</h2>
+        <form id="formulario-asiento">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fecha-asiento">Fecha:</label>
+              <input type="date" id="fecha-asiento" required />
+            </div>
+            <div class="form-group">
+              <label for="descripcion-asiento">Descripción:</label>
+              <input type="text" id="descripcion-asiento" placeholder="Descripción del asiento" required />
+            </div>
+            <div class="form-group">
+              <label for="tipo-asiento">Tipo:</label>
+              <select id="tipo-asiento">
+                <option value="normal">Normal</option>
+                <option value="ajuste">Ajuste</option>
+                <option value="cierre">Cierre</option>
+              </select>
+            </div>
           </div>
-          <div class="bar-track"><span class="bar-fill" id="salud-bar"></span></div>
-        </div>
-        <div class="bar" data-stat="energia">
-          <div class="bar-header">
-            <span>Energía</span>
-            <span class="bar-value" id="energia"></span>
+
+          <div class="movimientos-container">
+            <h3>Movimientos (Partida Doble)</h3>
+            <div id="lista-movimientos"></div>
+            <button type="button" id="agregar-movimiento" class="btn-secondary">+ Agregar Movimiento</button>
           </div>
-          <div class="bar-track"><span class="bar-fill" id="energia-bar"></span></div>
-        </div>
-        <div class="bar" data-stat="animo">
-          <div class="bar-header">
-            <span>Ánimo</span>
-            <span class="bar-value" id="animo"></span>
+
+          <div class="totales-asiento">
+            <span>Total Debe: <strong id="total-debe">$0.00</strong></span>
+            <span>Total Haber: <strong id="total-haber">$0.00</strong></span>
+            <span id="estado-cuadre" class="estado-pendiente">Estado: Pendiente de cuadre</span>
           </div>
-          <div class="bar-track"><span class="bar-fill" id="animo-bar"></span></div>
-        </div>
-        <div class="bar" data-stat="dinero">
-          <div class="bar-header">
-            <span>Dinero</span>
-            <span class="bar-value" id="dinero"></span>
+
+          <div class="form-actions">
+            <button type="submit" id="guardar-asiento" class="btn-primary" disabled>Guardar Asiento</button>
+            <button type="reset" id="limpiar-asiento" class="btn-secondary">Limpiar</button>
           </div>
-          <div class="bar-track"><span class="bar-fill" id="dinero-bar"></span></div>
-        </div>
-        <div class="bar" data-stat="habilidad">
-          <div class="bar-header">
-            <span>Habilidad</span>
-            <span class="bar-value" id="habilidad"></span>
-          </div>
-          <div class="bar-track"><span class="bar-fill" id="habilidad-bar"></span></div>
-        </div>
-        <div class="bar" data-stat="relaciones">
-          <div class="bar-header">
-            <span>Relaciones</span>
-            <span class="bar-value" id="relaciones"></span>
-          </div>
-          <div class="bar-track"><span class="bar-fill" id="relaciones-bar"></span></div>
-        </div>
-        <div class="bar" data-stat="reputacion">
-          <div class="bar-header">
-            <span>Reputación</span>
-            <span class="bar-value" id="reputacion"></span>
-          </div>
-          <div class="bar-track"><span class="bar-fill" id="reputacion-bar"></span></div>
-        </div>
-        <div class="bar" data-stat="estres">
-          <div class="bar-header">
-            <span>Estrés</span>
-            <span class="bar-value" id="estres"></span>
-          </div>
-          <div class="bar-track"><span class="bar-fill" id="estres-bar"></span></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Últimos Asientos Registrados</h2>
+        <div class="tabla-container">
+          <table id="tabla-asientos-recientes">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Tipo</th>
+                <th>Monto Total</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </section>
 
-    <main class="grid">
-      <section class="panel actions">
-        <h2>Acciones</h2>
-        <div class="actions-grid">
-          <button data-action="trabajar">Trabajar</button>
-          <button data-action="estudiar">Estudiar</button>
-          <button data-action="socializar">Socializar</button>
-          <button data-action="entrenar">Entrenar</button>
-          <button data-action="descansar">Descansar</button>
-          <button data-action="explorar">Explorar la ciudad</button>
-          <button data-action="hobby">Practicar hobby</button>
-          <button data-action="comprar">Ir de compras</button>
+    <!-- SECCIÓN PLAN DE CUENTAS -->
+    <section id="cuentas" class="tab-content">
+      <div class="card">
+        <h2>Plan de Cuentas</h2>
+        <button id="agregar-cuenta" class="btn-primary">+ Nueva Cuenta</button>
+        
+        <div class="filtro-cuentas">
+          <input type="text" id="buscar-cuenta" placeholder="Buscar cuenta..." />
+          <select id="filtro-tipo-cuenta">
+            <option value="">Todos los tipos</option>
+            <option value="activo">Activo</option>
+            <option value="pasivo">Pasivo</option>
+            <option value="capital">Capital</option>
+            <option value="ingreso">Ingreso</option>
+            <option value="gasto">Gasto</option>
+          </select>
         </div>
-        <div class="action-footer">
-          <button id="avanzar">Pasar tiempo</button>
-          <button id="guardar">Guardar partida</button>
-          <button id="cargar">Cargar partida</button>
-          <button id="reiniciar">Reiniciar</button>
+
+        <div class="tabla-container">
+          <table id="tabla-cuentas">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Nivel</th>
+                <th>Saldo Actual</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="panel log">
-        <h2>Bitácora</h2>
-        <div id="historial" class="historial"></div>
-      </section>
+    <!-- SECCIÓN LIBRO DIARIO -->
+    <section id="libro-diario" class="tab-content">
+      <div class="card">
+        <h2>Libro Diario</h2>
+        <div class="filtro-fechas">
+          <div class="form-group">
+            <label for="fecha-desde">Desde:</label>
+            <input type="date" id="fecha-desde" />
+          </div>
+          <div class="form-group">
+            <label for="fecha-hasta">Hasta:</label>
+            <input type="date" id="fecha-hasta" />
+          </div>
+          <button id="filtrar-libro-diario" class="btn-primary">Filtrar</button>
+          <button id="exportar-libro-diario" class="btn-secondary">Exportar</button>
+        </div>
 
-      <section class="panel goals">
-        <h2>Metas de vida</h2>
-        <ul>
-          <li>Conseguir estabilidad financiera.</li>
-          <li>Desarrollar una carrera sólida.</li>
-          <li>Construir relaciones significativas.</li>
-          <li>Mantener un equilibrio saludable.</li>
-        </ul>
-        <p class="tip">Tus decisiones afectan el desenlace. Mantén el equilibrio y atiende eventos inesperados.</p>
-      </section>
-    </main>
-  </div>
+        <div class="tabla-container">
+          <table id="tabla-libro-diario">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Cuenta</th>
+                <th>Descripción</th>
+                <th>Debe</th>
+                <th>Haber</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN LIBRO MAYOR -->
+    <section id="libro-mayor" class="tab-content">
+      <div class="card">
+        <h2>Libro Mayor</h2>
+        <div class="form-group">
+          <label for="seleccionar-cuenta-mayor">Seleccionar Cuenta:</label>
+          <select id="seleccionar-cuenta-mayor">
+            <option value="">-- Todas las cuentas --</option>
+          </select>
+        </div>
+
+        <div id="contenido-libro-mayor"></div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN BALANCES -->
+    <section id="balances" class="tab-content">
+      <div class="card">
+        <h2>Generar Balances</h2>
+        <div class="balance-options">
+          <button id="btn-balance-comprobacion" class="btn-primary">Balance de Comprobación</button>
+          <button id="btn-estado-resultados" class="btn-primary">Estado de Resultados</button>
+          <button id="btn-balance-general" class="btn-primary">Balance General</button>
+        </div>
+      </div>
+
+      <div id="resultado-balance" class="card resultado-balance">
+        <h3 id="titulo-balance"></h3>
+        <div id="contenido-balance"></div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN CONFIGURACIÓN -->
+    <section id="configuracion" class="tab-content">
+      <div class="card">
+        <h2>Configuración del Sistema</h2>
+        
+        <div class="form-group">
+          <label for="nombre-empresa">Nombre de la Empresa:</label>
+          <input type="text" id="nombre-empresa" placeholder="Mi Negocio S.A." />
+        </div>
+
+        <div class="form-group">
+          <label for="moneda">Moneda:</label>
+          <select id="moneda">
+            <option value="$">Dólar ($)</option>
+            <option value="€">Euro (€)</option>
+            <option value="MXN">Peso Mexicano (MXN)</option>
+            <option value="COP">Peso Colombiano (COP)</option>
+            <option value="ARS">Peso Argentino (ARS)</option>
+            <option value="CLP">Peso Chileno (CLP)</option>
+            <option value="PEN">Sol Peruano (PEN)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="ejercicio-fiscal">Ejercicio Fiscal:</label>
+          <input type="number" id="ejercicio-fiscal" min="2000" max="2100" value="2025" />
+        </div>
+
+        <div class="form-actions">
+          <button id="guardar-configuracion" class="btn-primary">Guardar Configuración</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Gestión de Datos</h2>
+        <p>Los datos se almacenan localmente en tu navegador. No se requiere conexión a internet.</p>
+        
+        <div class="data-actions">
+          <button id="exportar-datos" class="btn-secondary">📤 Exportar Datos (JSON)</button>
+          <button id="importar-datos" class="btn-secondary">📥 Importar Datos</button>
+          <button id="respaldar-datos" class="btn-secondary">💾 Crear Respaldo</button>
+          <button id="limpiar-datos" class="btn-danger">⚠️ Borrar Todos los Datos</button>
+        </div>
+        
+        <input type="file" id="archivo-importar" accept=".json" style="display: none;" />
+      </div>
+
+      <div class="card">
+        <h2>Información del Sistema</h2>
+        <div class="info-sistema">
+          <p><strong>Versión:</strong> 1.0.0</p>
+          <p><strong>Almacenamiento:</strong> LocalStorage del navegador</p>
+          <p><strong>Requisitos:</strong> Navegador web moderno (Chrome, Firefox, Edge, Safari)</p>
+          <p><strong>Funcionamiento:</strong> 100% offline - Sin necesidad de internet</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL PARA NUEVA CUENTA -->
+  <dialog id="modal-cuenta">
+    <div class="modal-content">
+      <h3>Nueva Cuenta Contable</h3>
+      <form id="formulario-cuenta">
+        <div class="form-group">
+          <label for="codigo-cuenta">Código:</label>
+          <input type="text" id="codigo-cuenta" required placeholder="Ej: 1.1.01" />
+        </div>
+        <div class="form-group">
+          <label for="nombre-cuenta">Nombre:</label>
+          <input type="text" id="nombre-cuenta" required placeholder="Ej: Caja General" />
+        </div>
+        <div class="form-group">
+          <label for="tipo-cuenta">Tipo:</label>
+          <select id="tipo-cuenta" required>
+            <option value="activo">Activo</option>
+            <option value="pasivo">Pasivo</option>
+            <option value="capital">Capital</option>
+            <option value="ingreso">Ingreso</option>
+            <option value="gasto">Gasto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="nivel-cuenta">Nivel:</label>
+          <select id="nivel-cuenta" required>
+            <option value="1">Nivel 1 (Mayor)</option>
+            <option value="2">Nivel 2 (Subcuenta)</option>
+            <option value="3">Nivel 3 (Auxiliar)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cuenta-padre">Cuenta Padre (opcional):</label>
+          <select id="cuenta-padre">
+            <option value="">-- Ninguna --</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Guardar Cuenta</button>
+          <button type="button" id="cerrar-modal-cuenta" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <footer class="footer">
+    <p>Sistema Contable Local © 2025 - Funciona sin conexión a internet</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
